@@ -13,8 +13,9 @@ A [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) plugin for t
 ## Installation
 
 1. Download the latest release `.tar.gz` from the [Releases](https://github.com/CodeLabFivem/zonebattery/releases) page
-2. Extract it to `~/homebrew/plugins/`
-3. Restart the plugin loader: `sudo systemctl restart plugin_loader.service`
+2. Rename the zip and the folder to `ZoneBattery`
+3. Copy it to `~/homebrew/plugins/`
+4. Restart the plugin loader: `sudo systemctl restart plugin_loader.service`
 
 ## Requirements
 

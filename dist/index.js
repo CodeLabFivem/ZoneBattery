@@ -1,5 +1,5 @@
 // @ts-ignore
-const manifest = {"name":"DeckyBatteryHealth","author":"koda-git","flags":["debug","_root"],"api_version":1,"publish":{"tags":["battery","health"],"description":"Decky Battery Health plugin.","image":"https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"}};
+const manifest = {"name":"ZoneBattery","author":"Codelab","flags":["debug","_root"],"api_version":1,"publish":{"tags":["battery","health"],"description":"Decky Battery Health plugin.","image":"https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"}};
 const API_VERSION = 2;
 const internalAPIConnection = window.__DECKY_SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED_deckyLoaderAPIInit;
 if (!internalAPIConnection) throw new Error('[@decky/api]: Failed to connect to loader API.');

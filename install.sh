@@ -8,7 +8,7 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 github_api_url="https://api.github.com/repos/CodeLabFivem/zonebattery/releases/latest"
-package="zonebattery"
+package="ZoneBattery"
 
 echo "installing $package"
 

@@ -3,12 +3,13 @@ import decky
 import asyncio
 import subprocess
 import re
+from concurrent.futures import ThreadPoolExecutor
 
 UPOWER = "/usr/bin/upower"
+_executor = ThreadPoolExecutor(max_workers=1)
 
 class Plugin:
     async def _main(self):
-        self._loop = asyncio.get_event_loop()
         decky.logger.info("Zotac Zone Battery Plugin Loaded!")
 
     async def _unload(self):
@@ -90,49 +91,52 @@ class Plugin:
 
         return "N/A"
 
+    def _get_battery_info_sync(self):
+        battery_path = self._find_battery_path()
+        if not battery_path:
+            return {"error": "No battery device found", "percentage": 0, "fullCharge": 0, "batterySize": 0, "isCharging": False, "timeRemaining": "N/A"}
+
+        output = subprocess.check_output([UPOWER, "-i", battery_path], universal_newlines=True)
+
+        def find(pattern):
+            m = re.search(pattern, output)
+            return m.group(1) if m else None
+
+        full_charge  = float(find(r'energy-full:\s+([\d.]+)')        or 0)
+        battery_size = float(find(r'energy-full-design:\s+([\d.]+)') or 0)
+        energy_now   = float(find(r'energy:\s+([\d.]+)')             or 0)
+        percentage   = float(find(r'percentage:\s+([\d.]+)%')        or 0)
+        state        =       find(r'state:\s+(\S+)')                 or "unknown"
+        voltage      = float(find(r'voltage:\s+([\d.]+)')            or 0)
+        energy_rate  = float(find(r'energy-rate:\s+([\d.]+)')        or 0)
+
+        is_charging = state in ("charging", "fully-charged")
+
+        if not is_charging and percentage > 0:
+            time_remaining = self._time_remaining(output, energy_now, energy_rate)
+        elif is_charging:
+            time_remaining = "Charging"
+        else:
+            time_remaining = "N/A"
+
+        return {
+            "fullCharge":    full_charge,
+            "batterySize":   battery_size,
+            "energyNow":     energy_now,
+            "percentage":    percentage,
+            "state":         state,
+            "voltage":       voltage,
+            "energyRate":    energy_rate,
+            "timeRemaining": time_remaining,
+            "isCharging":    is_charging,
+            "batteryHealth": round((full_charge / battery_size) * 100, 1) if battery_size > 0 else 0.0,
+            "batteryPath":   battery_path,
+        }
+
     async def get_battery_info(self):
         try:
-            battery_path = self._find_battery_path()
-            if not battery_path:
-                return {"error": "No battery device found", "percentage": 0, "fullCharge": 0, "batterySize": 0, "isCharging": False, "timeRemaining": "N/A"}
-
-            output = subprocess.check_output([UPOWER, "-i", battery_path], universal_newlines=True)
-
-            def find(pattern):
-                m = re.search(pattern, output)
-                return m.group(1) if m else None
-
-            full_charge  = float(find(r'energy-full:\s+([\d.]+)')        or 0)
-            battery_size = float(find(r'energy-full-design:\s+([\d.]+)') or 0)
-            energy_now   = float(find(r'energy:\s+([\d.]+)')             or 0)
-            percentage   = float(find(r'percentage:\s+([\d.]+)%')        or 0)
-            state        =       find(r'state:\s+(\S+)')                 or "unknown"
-            voltage      = float(find(r'voltage:\s+([\d.]+)')            or 0)
-            energy_rate  = float(find(r'energy-rate:\s+([\d.]+)')        or 0)
-
-            is_charging = state in ("charging", "fully-charged")
-
-            if not is_charging and percentage > 0:
-                time_remaining = self._time_remaining(output, energy_now, energy_rate)
-            elif is_charging:
-                time_remaining = "Charging"
-            else:
-                time_remaining = "N/A"
-
-            return {
-                "fullCharge":    full_charge,
-                "batterySize":   battery_size,
-                "energyNow":     energy_now,
-                "percentage":    percentage,
-                "state":         state,
-                "voltage":       voltage,
-                "energyRate":    energy_rate,
-                "timeRemaining": time_remaining,
-                "isCharging":    is_charging,
-                "batteryHealth": round((full_charge / battery_size) * 100, 1) if battery_size > 0 else 0.0,
-                "batteryPath":   battery_path,
-            }
-
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(_executor, self._get_battery_info_sync)
         except subprocess.CalledProcessError as e:
             decky.logger.error(f"upower failed: {e}")
             return {"error": str(e), "percentage": 0, "fullCharge": 0, "batterySize": 0, "isCharging": False, "timeRemaining": "N/A"}

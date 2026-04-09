@@ -49,7 +49,17 @@ class Plugin:
         total_minutes = int(hours * 60)
         return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
 
-    def _time_remaining(self, output: str, energy_now: float, energy_rate: float) -> str:
+    def _time_remaining(self, output: str, energy_now: float, energy_rate: float, full_charge: float = 0, is_charging: bool = False) -> str:
+        if is_charging:
+            match = re.search(r'time to full:\s+([\d.]+)\s+(hours?|minutes?|seconds?)', output)
+            if match:
+                value, unit = float(match.group(1)), match.group(2)
+                divisor = 1 if "hour" in unit else 60 if "minute" in unit else 3600
+                return self._format_time(value / divisor)
+            if full_charge > 0 and energy_now >= 0 and energy_rate > 0:
+                return self._format_time((full_charge - energy_now) / energy_rate)
+            return "N/A"
+
         match = re.search(r'time to empty:\s+([\d.]+)\s+(hours?|minutes?|seconds?)', output)
         if match:
             value, unit = float(match.group(1)), match.group(2)
@@ -112,10 +122,12 @@ class Plugin:
 
         is_charging = state in ("charging", "fully-charged")
 
-        if not is_charging and percentage > 0:
-            time_remaining = self._time_remaining(output, energy_now, energy_rate)
+        if state == "fully-charged":
+            time_remaining = "Full"
         elif is_charging:
-            time_remaining = "Charging"
+            time_remaining = self._time_remaining(output, energy_now, energy_rate, full_charge, is_charging=True)
+        elif percentage > 0:
+            time_remaining = self._time_remaining(output, energy_now, energy_rate)
         else:
             time_remaining = "N/A"
 

@@ -145,8 +145,8 @@ function Content() {
   const designCap   = info.batterySize ?? 0;
   const state       = info.state ?? "unknown";
 
-  const timeDisplay  = isCharging ? (timeLeft === "Charging" ? "Charging" : timeLeft) : (timeLeft !== "N/A" ? timeLeft : "—");
-  const timeSubLabel = isCharging ? "UNTIL FULL" : "PROJECTED BATTERY LIFE";
+  const timeDisplay  = timeLeft === "Full" ? "—" : (timeLeft !== "N/A" ? timeLeft : "—");
+  const timeSubLabel = isCharging && timeLeft !== "Full" ? "UNTIL FULL" : "PROJECTED BATTERY LIFE";
 
   return (
     <div style={{ paddingBottom: "8px" }}>

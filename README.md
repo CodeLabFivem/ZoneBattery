@@ -15,7 +15,7 @@ A [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) plugin for t
 ### One-line install (recommended)
 
 ```bash
-curl -L https://raw.githubusercontent.com/codelab/CodeLabFivem/main/install.sh | bash
+curl -L https://raw.githubusercontent.com/CodeLabFivem/ZoneBattery/main/install.sh | bash
 ```
 
 ### Manual install

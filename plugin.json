@@ -1,17 +1,16 @@
 {
-  "name": "zonebattery",
+  "name": "ZoneBattery",
   "author": "CodeLab",
   "flags": [
-    "debug",
-    "_root"
+    "root"
   ],
   "api_version": 1,
   "publish": {
     "tags": [
-      "template",
-      "root"
+      "battery",
+      "zotac"
     ],
-    "description": "Decky example plugin.",
+    "description": "Displays detailed battery health and status for the Zotac Zone.",
     "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
   }
 }

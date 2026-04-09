@@ -12,8 +12,6 @@ class Plugin:
         decky.logger.info("Zotac Zone Battery Plugin Loaded!")
 
     async def _unload(self):
-        if self._loop and not self._loop.is_closed():
-            self._loop.stop()
         decky.logger.info("Battery plugin unloaded.")
 
     async def _uninstall(self):
@@ -144,10 +142,3 @@ class Plugin:
 
     async def _migration(self):
         decky.logger.info("Migrating")
-        decky.migrate_logs(os.path.join(decky.DECKY_USER_HOME, ".config", "zonebattery", "zonebattery.log"))
-        decky.migrate_settings(
-            os.path.join(decky.DECKY_HOME, "settings", "zonebattery.json"),
-            os.path.join(decky.DECKY_USER_HOME, ".config", "zonebattery"))
-        decky.migrate_runtime(
-            os.path.join(decky.DECKY_HOME, "zonebattery"),
-            os.path.join(decky.DECKY_USER_HOME, ".local", "share", "zonebattery"))

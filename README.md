@@ -15,12 +15,12 @@ A [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) plugin for t
 ### One-line install (recommended)
 
 ```bash
-curl -L https://raw.githubusercontent.com/codelab/zonebattery/main/install.sh | bash
+curl -L https://raw.githubusercontent.com/codelab/CodeLabFivem/main/install.sh | bash
 ```
 
 ### Manual install
 
-1. Download the latest release `.tar.gz` from the [Releases](https://github.com/codelab/zonebattery/releases) page
+1. Download the latest release `.tar.gz` from the [Releases](https://github.com/CodeLabFivem/zonebattery/releases) page
 2. Extract it to `~/homebrew/plugins/zonebattery/`
 3. Restart the plugin loader: `sudo systemctl restart plugin_loader.service`
 

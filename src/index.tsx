@@ -146,7 +146,9 @@ function Content() {
   const state       = info.state ?? "unknown";
 
   const timeDisplay  = timeLeft === "Full" ? "—" : (timeLeft !== "N/A" ? timeLeft : "—");
-  const timeSubLabel = isCharging && timeLeft !== "Full" ? "UNTIL FULL" : "PROJECTED BATTERY LIFE";
+  const timeSubLabel = isCharging && timeLeft !== "Full"
+    ? (timeDisplay.includes("d") ? "DAYS UNTIL FULL" : "UNTIL FULL")
+    : (timeDisplay.includes("d") ? "DAYS REMAINING" : "PROJECTED BATTERY LIFE");
 
   return (
     <div style={{ paddingBottom: "8px" }}>

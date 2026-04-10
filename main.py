@@ -47,7 +47,11 @@ class Plugin:
         if hours <= 0:
             return "00:00"
         total_minutes = int(hours * 60)
-        return f"{total_minutes // 60:02d}:{total_minutes % 60:02d}"
+        total_hours   = total_minutes // 60
+        mins          = total_minutes % 60
+        if total_hours >= 24:
+            return f"{total_hours // 24}d {total_hours % 24:02d}:{mins:02d}"
+        return f"{total_hours:02d}:{mins:02d}"
 
     def _time_remaining(self, output: str, energy_now: float, energy_rate: float, full_charge: float = 0, is_charging: bool = False) -> str:
         if is_charging:
